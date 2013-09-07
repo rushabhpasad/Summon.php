@@ -52,9 +52,9 @@ class SerialsSolutions_Summon_Zend extends SerialsSolutions_Summon_Base
      *
      * Sets up the Summon API Client
      *
-     * @param string           $apiId   Summon API ID
-     * @param string           $apiKey  Summon API Key
-     * @param array            $options Associative array of additional options;
+     * @param string           $apiId     Summon API ID
+     * @param string           $apiKey    Summon API Key
+     * @param array            $options   Associative array of additional options;
      * legal keys:
      *    <ul>
      *      <li>authedUser - is the end-user authenticated?</li>
@@ -64,11 +64,12 @@ class SerialsSolutions_Summon_Zend extends SerialsSolutions_Summon_Base
      *      <li>version - API version to use</li>
      *      <li>responseType - Acceptable response (json or xml)</li>
      *    </ul>
-     * @param Zend_Http_Client $client  HTTP client object (optional)
+     * @param Zend_Http_Client $client    HTTP client object (optional)
+     * @param string           $clientKey Summon CLIENT KEY
      */
-    public function __construct($apiId, $apiKey, $options = array(), $client = null)
+    public function __construct($apiId, $apiKey, $options = array(), $client = null, $clientKey = "")
     {
-        parent::__construct($apiId, $apiKey, $options);
+        parent::__construct($apiId, $apiKey, $options, $clientKey);
         $this->client = is_object($client) ? $client : new Zend_Http_Client();
     }
 

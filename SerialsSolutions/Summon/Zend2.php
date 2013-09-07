@@ -60,9 +60,9 @@ class Zend2 extends \SerialsSolutions_Summon_Base implements LoggerAwareInterfac
      *
      * Sets up the Summon API Client
      *
-     * @param string     $apiId   Summon API ID
-     * @param string     $apiKey  Summon API Key
-     * @param array      $options Associative array of additional options;
+     * @param string     $apiId     Summon API ID
+     * @param string     $apiKey    Summon API Key
+     * @param array      $options   Associative array of additional options;
      * legal keys:
      *    <ul>
      *      <li>authedUser - is the end-user authenticated?</li>
@@ -72,11 +72,12 @@ class Zend2 extends \SerialsSolutions_Summon_Base implements LoggerAwareInterfac
      *      <li>version - API version to use</li>
      *      <li>responseType - Acceptable response (json or xml)</li>
      *    </ul>
-     * @param HttpClient $client  HTTP client object (optional)
+     * @param HttpClient $client    HTTP client object (optional)
+     * @param string     $clientKey Summon CLIENT KEY
      */
-    public function __construct($apiId, $apiKey, $options = array(), $client = null)
+    public function __construct($apiId, $apiKey, $options = array(), $client = null, $clientKey = "")
     {
-        parent::__construct($apiId, $apiKey, $options);
+        parent::__construct($apiId, $apiKey, $options, $clientKey);
         $this->client = is_object($client) ? $client : new HttpClient();
     }
 

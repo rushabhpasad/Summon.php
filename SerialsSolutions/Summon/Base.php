@@ -71,6 +71,12 @@ abstract class SerialsSolutions_Summon_Base
      * @var string
      */
     protected $apiId;
+    
+    /**
+     * The Client Key used for authentication
+     * @var string
+     */
+    protected $clientKey;
 
     /**
      * The session for the current transaction
@@ -96,9 +102,9 @@ abstract class SerialsSolutions_Summon_Base
      *
      * Sets up the Summon API Client
      *
-     * @param string $apiId   Summon API ID
-     * @param string $apiKey  Summon API Key
-     * @param array  $options Associative array of additional options; legal keys:
+     * @param string $apiId     Summon API ID
+     * @param string $apiKey    Summon API Key
+     * @param array  $options   Associative array of additional options; legal keys:
      *    <ul>
      *      <li>authedUser - is the end-user authenticated?</li>
      *      <li>debug - boolean to control debug mode</li>
@@ -107,12 +113,14 @@ abstract class SerialsSolutions_Summon_Base
      *      <li>version - API version to use</li>
      *      <li>responseType - Acceptable response (json or xml)</li>
      *    </ul>
+     * @param string $clientKey Summon CLIENT KEY
      */
-    public function __construct($apiId, $apiKey, $options = array())
+    public function __construct($apiId, $apiKey, $options = array(), $clientKey="")
     {
         // Process incoming parameters:
         $this->apiId = $apiId;
         $this->apiKey = $apiKey;
+        $this->clientKey = $clientKey;
         $legalOptions = array(
             'authedUser', 'debug', 'host', 'sessionId', 'version', 'responseType'
         );
