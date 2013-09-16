@@ -265,7 +265,7 @@ abstract class SerialsSolutions_Summon_Base
         }
         return $result;
     }
-
+    
     /**
      * Perform normalization and analysis of Summon return value.
      *
@@ -309,6 +309,96 @@ abstract class SerialsSolutions_Summon_Base
         }
 
         return $result;
+    }
+    
+    /**
+     * Make a call to the availability API of Summon
+     * 
+     * @param
+     */
+    public function getAvailability($params = array(), $service = 'availability', $method = 'GET')
+    {
+    	$baseUrl = $this->host . '/' . $this->version . '/' . $service . '/' . $this->clientKey;
+    	
+    	// Build Query String
+    	$query = array();
+    	foreach ($params as $function => $value) {
+    		if (is_array($value)) {
+    			foreach ($value as $additional) {
+    				$additional = urlencode($additional);
+    				$query[] = "$function=$additional";
+    			}
+    		} else {
+    			$value = urlencode($value);
+    			$query[] = "$function=$value";
+    		}
+    	}
+    	asort($query);
+    	$queryString = implode('&', $query);
+    	
+    	// Build Headers
+    	$headers = array(
+    			'Accept' => 'application/'.$this->responseType,
+    	);
+    	if ($this->sessionId) {
+    		$headers['x-summon-session-id'] = $this->sessionId;
+    	}
+    	// Send request
+    	$result = $this->httpRequest($baseUrl, $method, $queryString, $headers);
+    	// Check for errors and store sessionId for future requests
+    	$this->processAvailabilityRespose($result);
+    	return $result;
+    }
+    
+    /**
+     * Perform normalization and analysis of Summon return value.
+     *
+     * @param array $input The raw response from Summon
+     *
+     * @throws SerialsSolutions_Summon_Exception
+     * @return array       The processed response from Summon
+     */
+    private function processAvailabilityRespose($input)
+    {
+    	if($this->responseType === "json") {
+    		
+    		// Unpack JSON Data
+    		$result = json_decode($input, true);
+    		// Catch decoding errors -- turn a bad JSON input into an empty result set
+    		// containing an appropriate error code.
+    		if (!$result) {
+    			$msg = 'Unable to process query<br />Summon returned: ' .
+    					'<br />'. $input;
+    			throw new SerialsSolutions_Summon_Exception($msg);
+    		} else {
+    			if(isset($result['sessionId'])) {
+    				$this->sessionId = $result['sessionId'];
+    			}
+    		}
+    	} else if ($this->responseType === "xml") {
+    		// Unpack XML Data
+    		$result = simplexml_load_string($input);
+    		
+    		// Catch decoding errors -- turn a bad JSON input into an empty result set
+    		// containing an appropriate error code.
+    		if (!$result) {
+    			$msg = 'Unable to process query<br />Summon returned: ' .
+    					'<br />'. $input;
+    			throw new SerialsSolutions_Summon_Exception($msg);
+    		} else {
+    			foreach ($result-> attributes() as $key => $value) {
+	    			if($key == "sessionId") {
+	    				$this->sessionId = $value;
+	    				break;
+	    			}
+    			}
+    		}
+    	}
+    }
+    
+    public function getSessionId() {
+    	if(isset($this->sessionId)) return $this->sessionId;
+    	return "";
     }
 
     /**
